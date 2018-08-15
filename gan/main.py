@@ -155,25 +155,19 @@ def main(_):
     else:
         raise ValueError("unknown model {}".format(FLAGS.model))
 
-    #if FLAGS.multi_gpu:
-    #    from core.model_multi_gpu import MMD_GAN as Model
+    if FLAGS.dataset == 'mnist':
+        FLAGS.output_size = 28
+        FLAGS.c_dim = 1
+    elif FLAGS.dataset == 'cifar10':
+        FLAGS.output_size = 32
+        FLAGS.c_dim = 3
+    elif FLAGS.dataset in ['celebA', 'lsun', 'imagenet']:
+        FLAGS.c_dim = 3
+
     with tf.Session(config=sess_config) as sess:
         #sess = tf_debug.tf_debug.TensorBoardDebugWrapperSession(sess,'localhost:6064')
         #sess.add_tensor_filter("has_inf_or_nan", tf_debug.has_inf_or_nan)
-        if FLAGS.dataset == 'mnist':
-            gan = Model(sess, config=FLAGS, batch_size=FLAGS.batch_size, output_size=28, c_dim=1,
-                        data_dir=FLAGS.data_dir)
-        elif FLAGS.dataset == 'cifar10':
-            gan = Model(sess, config=FLAGS, batch_size=FLAGS.batch_size, output_size=32, c_dim=3,
-                        data_dir=FLAGS.data_dir)
-        elif FLAGS.dataset in ['celebA', 'lsun', 'imagenet']:
-            gan = Model(sess, config=FLAGS, batch_size=FLAGS.batch_size, output_size=FLAGS.output_size, c_dim=3,
-                        data_dir=FLAGS.data_dir)
-        else:
-            gan = Model(
-                sess, batch_size=FLAGS.batch_size,
-                output_size=FLAGS.output_size, c_dim=FLAGS.c_dim,
-                data_dir=FLAGS.data_dir)
+        gan = Model(sess, config=FLAGS)
 
         if FLAGS.is_train:
             gan.train()

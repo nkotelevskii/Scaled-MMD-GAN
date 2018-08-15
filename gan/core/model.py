@@ -12,14 +12,13 @@ from utils import timer, scorer, misc
 
 
 class MMD_GAN(object):
-    def __init__(self, sess, config,
-                 batch_size=64, output_size=64,
-                 z_dim=100, c_dim=3, data_dir='./data'):
+    def __init__(self, sess, config):
         if config.learning_rate_D < 0:
             config.learning_rate_D = config.learning_rate
         """
         Args:
             sess: TensorFlow session
+            config: The configuration; see main.py for entries
             batch_size: The size of batch. Should be specified before training.
             output_size: (optional) The resolution in pixels of the images. [64]
             z_dim: (optional) Dimension of dim for Z. [100]
@@ -34,29 +33,30 @@ class MMD_GAN(object):
         self.timer = timer.Timer()
         self.dataset = config.dataset
         if config.architecture == 'dc128':
-            output_size = 128
-        if config.architecture in ['dc64', 'dcgan64']:
-            output_size = 64
+            config.output_size = 128
+        elif config.architecture in ['dc64', 'dcgan64']:
+            config.output_size = 64
+        output_size = config.output_size
 
         self.sess = sess
         if config.real_batch_size == -1:
             config.real_batch_size = config.batch_size
         self.config = config
-        self.is_grayscale = (c_dim == 1)
-        self.batch_size = batch_size
+        self.is_grayscale = (config.c_dim == 1)
+        self.batch_size = config.batch_size
         self.real_batch_size = config.real_batch_size
-        self.sample_size = 64 if self.config.is_train else batch_size
+        self.sample_size = 64 if self.config.is_train else config.batch_size
         #self.sample_size = batch_size
 
         self.output_size = output_size
-        self.data_dir = data_dir
+        self.data_dir = config.data_dir
         self.z_dim = self.config.z_dim
 
         self.gf_dim = config.gf_dim
         self.df_dim = config.df_dim
         self.dof_dim = self.config.dof_dim
 
-        self.c_dim = c_dim
+        self.c_dim = config.c_dim
         self.input_dim = self.output_size*self.output_size*self.c_dim
 
         discriminator_desc = '_dc'
