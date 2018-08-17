@@ -17,6 +17,10 @@ def str2bool(v):
 
 def make_flags(parser):
     FLAGS = parser.parse_args()
+    if FLAGS.num_gpus is None:
+        vis_devs = os.environ.get('CUDA_VISIBLE_DEVICES', "")
+        FLAGS.num_gpus = len(vis_devs.split(','))
+
     if FLAGS.config_file:
         config = yaml.load(open(FLAGS.config_file))
         dic = vars(FLAGS)
@@ -120,14 +124,12 @@ add_arg('-incho_max_steps',             default=1000,           type=int,       
 
 # multi-gpu training
 add_arg('-multi_gpu',                   default=False,          type=str2bool,  help=' train accross multiple gpus in a multi-tower fashion')
-add_arg('-num_gpus',                    default=1,              type=int,       help='Number of GPUs to use')
+add_arg('-num_gpus',                    default=None,           type=int,       help='Number of GPUs to use; default len(CUDA_VISIBLE_DEVICES)')
 # conditional gan, only for imagenet
 add_arg('-with_labels',                 default=False,          type=str2bool,  help='Conditional GAN')
 
 
 FLAGS = make_flags(parser)
-
-FLAGS.num_gpus = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
 
 def main(_):
