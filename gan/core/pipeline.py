@@ -363,7 +363,7 @@ class Mnist(Pipeline):
         elif self.format == 'NHWC':
             teX = loaded[16:].reshape((10000, 28, 28, 1)).astype(np.float)
 
-        fd = open(os.path.join(self.data_dir, ' t10k-labels-idx1-ubyte'))
+        fd = open(os.path.join(self.data_dir, 't10k-labels-idx1-ubyte'))
         loaded = np.fromfile(file=fd, dtype=np.uint8)
         teY = loaded[8:].reshape((10000)).astype(np.float)
 
