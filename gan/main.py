@@ -75,7 +75,7 @@ add_arg('-config_file',                 default="",             type=str,       
 
 # models
 add_arg('-architecture',                default="dcgan",        type=str,       help='The name of the architecture [dcgan, g-resnet5, dcgan5]')
-add_arg('-kernel',                      default="",             type=str,       help="The name of the kernel ['', 'mix_rbf', 'mix_rq', 'distance', 'dot', 'mix_rq_dot']")
+add_arg('-kernel',                      default="mix_rq_dot",   type=str,       help="The name of the kernel ['', 'mix_rbf', 'mix_rq', 'distance', 'dot', 'mix_rq_dot']")
 add_arg('-model',                       default="mmd",          type=str,       help='The model type [mmd, smmd, swgan, wgan_gp]')
 
 # training options
