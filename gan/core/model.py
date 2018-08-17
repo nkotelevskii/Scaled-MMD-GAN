@@ -19,14 +19,6 @@ class MMD_GAN(object):
         Args:
             sess: TensorFlow session
             config: The configuration; see main.py for entries
-            batch_size: The size of batch. Should be specified before training.
-            output_size: (optional) The resolution in pixels of the images. [64]
-            z_dim: (optional) Dimension of dim for Z. [100]
-            gf_dim: (optional) Dimension of gen filters in first conv layer. [64]
-            df_dim: (optional) Dimension of discrim filters in first conv layer. [64]
-            gfc_dim: (optional) Dimension of gen units for for fully connected layer. [1024]
-            dfc_dim: (optional) Dimension of discrim units for fully connected layer. [1024]
-            c_dim: (optional) Dimension of image color. For grayscale input, set to 1. [3]
         """
 
         self.format = 'NCHW'
@@ -184,7 +176,7 @@ class MMD_GAN(object):
         self.towers_d_grads = []
         self.update_ops = []
         with tf.variable_scope(tf.get_variable_scope()):
-            for i in xrange(self.config.num_gpus):
+            for i in range(self.config.num_gpus):
                 worker = '/gpu:%d' % i
                 device_setter = misc._create_device_setter(is_cpu_ps, worker, self.config.num_gpus, ps_device=self.consolidation_device)
                 with tf.device(device_setter):

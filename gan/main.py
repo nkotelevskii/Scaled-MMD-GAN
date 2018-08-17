@@ -52,7 +52,7 @@ add_arg('-batch_norm',                  default=False,          type=str2bool,  
 add_arg('-init',                        default=0.02,           type=float,     help='Initialization value [0.02]')
 # dimensions
 add_arg('-batch_size',                  default=64,             type=int,       help='The size of batch images [1000]')
-add_arg('-real_batch_size',             default=-1,            type=int,       help='The size of batch images for real samples. If -1 then same as batch_size [-1]')
+add_arg('-real_batch_size',             default=-1,             type=int,       help='The size of batch images for real samples. If -1 then same as batch_size [-1]')
 add_arg('-output_size',                 default=128,            type=int,       help='The size of the output images to produce [64]')
 add_arg('-c_dim',                       default=3,              type=int,       help='Dimension of image color. [3]')
 add_arg('-z_dim',                       default=128,            type=int,       help='Dimension of latent noise [128]')
@@ -114,9 +114,9 @@ add_arg('-with_sn',                     default=False,          type=str2bool,  
 add_arg('-with_learnable_sn_scale',     default=False,          type=str2bool,  help='train the scale of normalized weights')
 
 # incomplete cholesky options for sobolevmmd
-add_arg('-use-incomplete-cho',          default=True,           type=str2bool,  help="whether to use incomplete Cholesky for sobolevmmd [true]")
-add_arg('-incho-eta',                   default=1e-3,           type=float,     help="stopping criterion for incomplete cholesky [%(default)s]")
-add_arg('-incho-max-steps',             default=1000,           type=int,       help="iteration cap for incomplete cholesky [%(default)s]")
+add_arg('-use_incomplete_cho',          default=True,           type=str2bool,  help="whether to use incomplete Cholesky for sobolevmmd [true]")
+add_arg('-incho_eta',                   default=1e-3,           type=float,     help="stopping criterion for incomplete cholesky [%(default)s]")
+add_arg('-incho_max_steps',             default=1000,           type=int,       help="iteration cap for incomplete cholesky [%(default)s]")
 
 # multi-gpu training
 add_arg('-multi_gpu',                   default=False,          type=str2bool,  help=' train accross multiple gpus in a multi-tower fashion')
