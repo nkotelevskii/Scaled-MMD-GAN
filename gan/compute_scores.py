@@ -9,6 +9,9 @@ import tensorflow as tf
 from tqdm import tqdm
 
 
+# TODO: this should probably be replaced with tf.contrib.gan.eval
+
+
 # from tqdm docs: https://pypi.python.org/pypi/tqdm#hooks-and-callbacks
 class TqdmUpTo(tqdm):
     def update_to(self, b=1, bsize=1, tsize=None):
@@ -54,7 +57,7 @@ class Inception(object):
                 shape = [s.value for s in o.get_shape()]
                 if len(shape) and shape[0] == 1:
                     shape[0] = None
-                o._shape = tf.TensorShape(shape)
+                o.set_shape(tf.TensorShape(shape))
         w = sess.graph.get_operation_by_name(
             "softmax/logits/MatMul").inputs[1]
         self.coder = tf.squeeze(tf.squeeze(pool3, 2), 1)
