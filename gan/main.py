@@ -173,7 +173,6 @@ def main(_):
 
         if FLAGS.is_train:
             gan.train()
-            gan.pre_process_only()
         elif FLAGS.print_pca:
             gan.print_pca()
         elif FLAGS.visualize:
