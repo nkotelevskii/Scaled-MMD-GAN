@@ -15,8 +15,10 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-def make_flags(parser):
-    FLAGS = parser.parse_args()
+parser = argparse.ArgumentParser()
+
+def make_flags(args=None):
+    FLAGS = parser.parse_args(args)
     if FLAGS.num_gpus is None:
         vis_devs = os.environ.get('CUDA_VISIBLE_DEVICES', "")
         FLAGS.num_gpus = len(vis_devs.split(','))
@@ -27,10 +29,6 @@ def make_flags(parser):
         all(map(dic.pop, config))
         dic.update(config)
     return FLAGS
-
-
-parser = argparse.ArgumentParser()
-
 
 def add_arg(name, **kwargs):
     "Convenience to handle reasonable names for args as well as crappy ones."
@@ -129,7 +127,8 @@ add_arg('-num_gpus',                    default=None,           type=int,       
 add_arg('-with_labels',                 default=False,          type=str2bool,  help='Conditional GAN')
 
 
-FLAGS = make_flags(parser)
+if __name__ == '__main__':
+    FLAGS = make_flags()
 
 
 def main(_):
