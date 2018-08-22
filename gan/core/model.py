@@ -385,7 +385,7 @@ class MMD_GAN(object):
         with tf.variable_scope('loss'):
             if self.config.with_scaling:
 
-                print('[*] Adding scaling variant: %s', self.config.scaling_variant)
+                print('[*] Adding scaling variant: %s' % self.config.scaling_variant)
                 self.apply_scaling(scale)
                 tf.summary.scalar(self.optim_name + '_non_scaled_G', unscaled_g_loss)
                 tf.summary.scalar(self.optim_name + '_norm_grad_G', norm2_jac)
