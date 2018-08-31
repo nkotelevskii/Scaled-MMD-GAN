@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import pprint
+
 import numpy as np
 from . import mmd
 from .ops import safer_norm, tf, squared_norm_jacobian
@@ -195,10 +196,11 @@ class MMD_GAN(object):
                         #else:
                         #    self.set_tower_loss(scope, images,Generator,Discriminator,update_collection="NO_OPS")
                         #    update_ops.extend(tf.get_collection(tf.GraphKeys.UPDATE_OPS,scope))
-                        losses.append([self.g_loss, self.d_loss])
 
                         #update_ops.append(tf.get_collection(tf.GraphKeys.UPDATE_OPS,scope))
                         if self.config.is_train:
+                            losses.append([self.g_loss, self.d_loss])
+
                             if i == 0:
                                 t_vars = tf.trainable_variables()
                                 self.d_vars = [var for var in t_vars if 'd_' in var.name]
@@ -262,12 +264,28 @@ class MMD_GAN(object):
         dbn = self.config.batch_norm & (self.config.gradient_penalty <= 0)
         self.z = tf.random_uniform([self.batch_size, self.z_dim], minval=-1.,
                                    maxval=1., dtype=tf.float32, name='z')
+
+        gen_kw = {
+            'dim': self.gf_dim,
+            'c_dim': self.c_dim,
+            'output_size': self.output_size,
+            'use_batch_norm': self.config.batch_norm,
+            'format': self.format,
+            'is_train': self.config.is_train,
+        }
+        disc_kw = {
+            'dim': self.df_dim,
+            'o_dim': self.dof_dim,
+            'use_batch_norm': dbn,
+            'with_sn': self.config.with_sn,
+            'with_learnable_sn_scale': self.config.with_learnable_sn_scale,
+            'format': self.format,
+            'is_train': self.config.is_train,
+        }
         if self.with_labels:
-            generator = Generator(self.num_classes, self.gf_dim, self.c_dim, self.output_size, self.config.batch_norm, format=self.format)
-            self.discriminator = Discriminator(self.num_classes, self.df_dim, self.dof_dim, dbn, with_sn=self.config.with_sn, with_learnable_sn_scale=self.config.with_learnable_sn_scale, format=self.format)
-        else:
-            generator = Generator(self.gf_dim, self.c_dim, self.output_size, self.config.batch_norm, format=self.format)
-            self.discriminator = Discriminator(self.df_dim, self.dof_dim, dbn, with_sn=self.config.with_sn, with_learnable_sn_scale=self.config.with_learnable_sn_scale, format=self.format)
+            gen_kw['num_classes'] = disc_kw['num_classes'] = self.num_classes
+        self.generator = Generator(**gen_kw)
+        self.discriminator = Discriminator(**disc_kw)
 
         # tf.summary.histogram("z", self.z)
         if self.with_labels:

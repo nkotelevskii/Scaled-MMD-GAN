@@ -5,14 +5,19 @@ Created on Wed Jan 10 14:34:47 2018
 
 @author: mikolajbinkowski
 """
+from functools import partial
+
 import tensorflow as tf
+
 from core.snops import batch_norm, conv2d, deconv2d, linear, lrelu, linear_one_hot
 from utils.misc import conv_sizes
 # Generators
 
 
 class Generator(object):
-    def __init__(self, dim, c_dim, output_size, use_batch_norm, prefix='g_', with_sn=False, scale=1.0, with_learnable_sn_scale=False, format='NCHW'):
+    def __init__(self, dim, c_dim, output_size, use_batch_norm, prefix='g_',
+                 with_sn=False, scale=1.0, with_learnable_sn_scale=False,
+                 format='NCHW', is_train=True):
         self.used = False
         self.use_batch_norm = use_batch_norm
         self.dim = dim
@@ -23,13 +28,18 @@ class Generator(object):
         self.scale = scale
         self.with_learnable_sn_scale = with_learnable_sn_scale
         self.format = format
+        self.is_train = is_train
         if use_batch_norm:
-            self.g_bn0 = batch_norm(name=prefix + 'bn0', format=self.format)
-            self.g_bn1 = batch_norm(name=prefix + 'bn1', format=self.format)
-            self.g_bn2 = batch_norm(name=prefix + 'bn2', format=self.format)
-            self.g_bn3 = batch_norm(name=prefix + 'bn3', format=self.format)
-            self.g_bn4 = batch_norm(name=prefix + 'bn4', format=self.format)
-            self.g_bn5 = batch_norm(name=prefix + 'bn5', format=self.format)
+            def bn(n):
+                return partial(batch_norm(name='{}bn{}'.format(prefix, n),
+                                          format=self.format),
+                               train=is_train)
+            self.g_bn0 = bn(0)
+            self.g_bn1 = bn(1)
+            self.g_bn2 = bn(2)
+            self.g_bn3 = bn(3)
+            self.g_bn4 = bn(4)
+            self.g_bn5 = bn(5)
         else:
             self.g_bn0 = lambda x: x
             self.g_bn1 = lambda x: x
@@ -233,7 +243,9 @@ class SNGANGenerator(Generator):
 # Discriminator
 
 class Discriminator(object):
-    def __init__(self, dim, o_dim, use_batch_norm, prefix='d_', with_sn=False, scale=1.0, with_learnable_sn_scale=False, format='NCHW'):
+    def __init__(self, dim, o_dim, use_batch_norm, prefix='d_',
+                 with_sn=False, scale=1.0, with_learnable_sn_scale=False,
+                 format='NCHW', is_train=True):
         self.dim = dim
         self.o_dim = o_dim
         self.prefix = prefix
@@ -243,13 +255,18 @@ class Discriminator(object):
         self.scale = scale
         self.with_learnable_sn_scale = with_learnable_sn_scale
         self.format = format
+        self.is_train = is_train
         if use_batch_norm:
-            self.d_bn0 = batch_norm(name=prefix + 'bn0', format=self.format)
-            self.d_bn1 = batch_norm(name=prefix + 'bn1', format=self.format)
-            self.d_bn2 = batch_norm(name=prefix + 'bn2', format=self.format)
-            self.d_bn3 = batch_norm(name=prefix + 'bn3', format=self.format)
-            self.d_bn4 = batch_norm(name=prefix + 'bn4', format=self.format)
-            self.d_bn5 = batch_norm(name=prefix + 'bn5', format=self.format)
+            def bn(n):
+                return partial(batch_norm(name='{}bn{}'.format(prefix, n),
+                                          format=self.format),
+                               train=is_train)
+            self.d_bn0 = bn(0)
+            self.d_bn1 = bn(1)
+            self.d_bn2 = bn(2)
+            self.d_bn3 = bn(3)
+            self.d_bn4 = bn(4)
+            self.d_bn5 = bn(5)
         else:
             self.d_bn0 = lambda x: x
             self.d_bn1 = lambda x: x
