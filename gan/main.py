@@ -141,21 +141,6 @@ def main(_):
         allow_soft_placement=True)
     sess_config.gpu_options.allow_growth = True
 
-    if FLAGS.model == 'mmd':
-        from core.model import MMD_GAN as Model
-    elif FLAGS.model == 'gan':
-        from core.gan import GAN as Model
-    elif FLAGS.model == 'wgan_gp':
-        from core.wgan_gp import WGAN_GP as Model
-    elif FLAGS.model == 'cramer':
-        from core.cramer import Cramer_GAN as Model
-    elif FLAGS.model == 'smmd':
-        from core.smmd import SMMD as Model
-    elif FLAGS.model == 'swgan':
-        from core.smmd import SWGAN as Model
-    else:
-        raise ValueError("unknown model {}".format(FLAGS.model))
-
     if FLAGS.dataset == 'mnist':
         FLAGS.output_size = 28
         FLAGS.c_dim = 1
@@ -164,6 +149,9 @@ def main(_):
         FLAGS.c_dim = 3
     elif FLAGS.dataset in ['celebA', 'lsun', 'imagenet']:
         FLAGS.c_dim = 3
+
+    from core import model_class
+    Model = model_class(FLAGS.model)
 
     with tf.Session(config=sess_config) as sess:
         #sess = tf_debug.tf_debug.TensorBoardDebugWrapperSession(sess,'localhost:6064')
