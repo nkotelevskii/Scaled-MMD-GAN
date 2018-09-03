@@ -62,10 +62,12 @@ class MMD_GAN(object):
         self.description = ("%s%s_%s%s_%sd%d-%d-%d_%s_%s_%s" % (
                             self.dataset, arch,
                             self.config.architecture, discriminator_desc,
-                            self.config.kernel, self.config.dsteps,
+                            self.config.model + '-' + self.config.kernel,
+                            self.config.dsteps,
                             self.config.start_dsteps, self.config.gsteps, self.batch_size,
                             self.output_size, lr))
-
+        if self.config.dof_dim > 1:
+            self.description += '_dof{}'.format(self.config.dof_dim)
         if self.config.batch_norm:
             self.description += '_bn'
 
