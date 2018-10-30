@@ -50,8 +50,8 @@ add_arg('-dsteps',                      default=5,              type=int,       
 add_arg('-gsteps',                      default=1,              type=int,       help='Number of generator steps in a row [%(default)s]')
 add_arg('-start_dsteps',                default=10,             type=int,       help='Number of discrimintor steps in a row during first 20 steps and every 100th step [%(default)s]')
 
-add_arg('-clip_grad',                   default=True,           type=str2bool,  help='Use gradient clippint [%(default)s]')
-add_arg('-batch_norm',                  default=False,          type=str2bool,  help='Use of batch norm [%(default)s]')
+add_arg('-clip_grad',                   default=True,           type=str2bool,  help='Use gradient clipping [%(default)s]')
+add_arg('-batch_norm',                  default=False,          type=str2bool,  help='Use of batch norm; overridden off if gradient penalty is used [%(default)s]')
 
 # Initalization params
 add_arg('-init',                        default=0.02,           type=float,     help='Initialization value [%(default)s]')
@@ -72,7 +72,7 @@ add_arg('-sample_dir',                  default="sample",       type=str,       
 add_arg('-log_dir',                     default="log",          type=str,       help='Directory name to save the image samples [%(default)s]')
 add_arg('-data_dir',                    default="data",         type=str,       help='Directory containing datasets [%(default)s]')
 add_arg('-out_dir',                     default="",             type=str,       help='Directory name to save the outputs of the experiment (log, sample, checkpoints) [.]')
-add_arg('-config_file',                 default="",             type=str,       help='path to the config file')
+add_arg('-config_file',                 default="",             type=str,       help='path to a YAML config file overriding arguments')
 
 # models
 add_arg('-architecture',                default="dcgan",        type=str,       help='The name of the architecture [*dcgan*, g-resnet5, dcgan5]')
@@ -105,7 +105,7 @@ add_arg('-MMD_sdlr_num_test',           default=3,              type=int,       
 add_arg('-MMD_sdlr_freq',               default=2000,           type=int,       help='lr scheduler: frequency of scoring the model [%(default)s]')
 
 # discriminator penalties
-add_arg('-gradient_penalty',            default=0.0,            type=float,     help='Use gradient penalty if > 0.0  [%(default)s]')
+add_arg('-gradient_penalty',            default=0.0,            type=float,     help='Use gradient penalty if > 0 [%(default)s]')
 add_arg('-L2_discriminator_penalty',    default=0.0,            type=float,     help="Use L2 penalty on discriminator features if > 0 [%(default)s]")
 
 # scaled MMD
