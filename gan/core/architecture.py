@@ -29,24 +29,21 @@ class Generator(object):
         self.with_learnable_sn_scale = with_learnable_sn_scale
         self.format = format
         self.is_train = is_train
-        if use_batch_norm:
-            def bn(n):
-                return partial(batch_norm(name='{}bn{}'.format(prefix, n),
-                                          format=self.format),
-                               train=is_train)
-            self.g_bn0 = bn(0)
-            self.g_bn1 = bn(1)
-            self.g_bn2 = bn(2)
-            self.g_bn3 = bn(3)
-            self.g_bn4 = bn(4)
-            self.g_bn5 = bn(5)
+
+        self.g_bn0 = self.make_bn(0)
+        self.g_bn1 = self.make_bn(1)
+        self.g_bn2 = self.make_bn(2)
+        self.g_bn3 = self.make_bn(3)
+        self.g_bn4 = self.make_bn(4)
+        self.g_bn5 = self.make_bn(5)
+
+    def make_bn(self, n):
+        if self.use_batch_norm:
+            bn = batch_norm(name='{}bn{}'.format(self.prefix, n),
+                            format=self.format)
+            return partial(bn, train=self.is_train)
         else:
-            self.g_bn0 = lambda x: x
-            self.g_bn1 = lambda x: x
-            self.g_bn2 = lambda x: x
-            self.g_bn3 = lambda x: x
-            self.g_bn4 = lambda x: x
-            self.g_bn5 = lambda x: x
+            return lambda x: x
 
     def __call__(self, seed, batch_size, update_collection=tf.GraphKeys.UPDATE_OPS):
         with tf.variable_scope('generator') as scope:
@@ -256,24 +253,24 @@ class Discriminator(object):
         self.with_learnable_sn_scale = with_learnable_sn_scale
         self.format = format
         self.is_train = is_train
-        if use_batch_norm:
-            def bn(n):
-                return partial(batch_norm(name='{}bn{}'.format(prefix, n),
-                                          format=self.format),
-                               train=is_train)
-            self.d_bn0 = bn(0)
-            self.d_bn1 = bn(1)
-            self.d_bn2 = bn(2)
-            self.d_bn3 = bn(3)
-            self.d_bn4 = bn(4)
-            self.d_bn5 = bn(5)
+
+        self.d_bn0 = self.make_bn(0)
+        self.d_bn1 = self.make_bn(1)
+        self.d_bn2 = self.make_bn(2)
+        self.d_bn3 = self.make_bn(3)
+        self.d_bn4 = self.make_bn(4)
+        self.d_bn5 = self.make_bn(5)
+
+    def make_bn(self, n, prefix=None):
+        if prefix is None:
+            prefix = self.prefix
+
+        if self.use_batch_norm:
+            bn = batch_norm(name='{}bn{}'.format(prefix, n),
+                            format=self.format)
+            return partial(bn, train=self.is_train)
         else:
-            self.d_bn0 = lambda x: x
-            self.d_bn1 = lambda x: x
-            self.d_bn2 = lambda x: x
-            self.d_bn3 = lambda x: x
-            self.d_bn4 = lambda x: x
-            self.d_bn5 = lambda x: x
+            return lambda x: x
 
     def __call__(self, image, batch_size, return_layers=False,  update_collection=tf.GraphKeys.UPDATE_OPS):
         with tf.variable_scope("discriminator") as scope:
