@@ -469,15 +469,21 @@ class MMD_GAN(object):
 
     def apply_grads(self):
         with tf.variable_scope("G_grads"):
-            self.g_grads = self.g_optim.apply_gradients(
-                self.g_gvs,
-                global_step=self.global_step
-            )
+            if len(self.g_gvs):
+                self.g_grads = self.g_optim.apply_gradients(
+                    self.g_gvs,
+                    global_step=self.global_step
+                )
+            else:
+                self.d_grads = tf.no_op()
         with tf.variable_scope("D_grads"):
-            self.d_grads = self.d_optim.apply_gradients(
-                self.d_gvs,
-                global_step=self.global_d_step
-            )
+            if len(self.d_gvs):
+                self.d_grads = self.d_optim.apply_gradients(
+                    self.d_gvs,
+                    global_step=self.global_d_step
+                )
+            else:
+                self.d_grads = tf.no_op()
 
     def set_counters(self, step):
 
