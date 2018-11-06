@@ -293,11 +293,11 @@ class MMD_GAN(object):
         if self.with_labels:
             dist_y = tf.distributions.Categorical(probs=np.ones([self.num_classes])/self.num_classes)
             self.y = dist_y.sample(sample_shape=[self.batch_size], name='y')
-            self.G = generator(self.z, self.y, self.batch_size, update_collection=update_collection)
-            self.sampler = generator(self.sample_z, self.sample_y, self.sample_size, update_collection="NO_OPS")
+            self.G = self.generator(self.z, self.y, self.batch_size, update_collection=update_collection)
+            self.sampler = self.generator(self.sample_z, self.sample_y, self.sample_size, update_collection="NO_OPS")
         else:
-            self.G = generator(self.z, self.batch_size, update_collection=update_collection)
-            self.sampler = generator(self.sample_z, self.sample_size, update_collection="NO_OPS")
+            self.G = self.generator(self.z, self.batch_size, update_collection=update_collection)
+            self.sampler = self.generator(self.sample_z, self.sample_size, update_collection="NO_OPS")
 
         if self.format == 'NCHW':
             self.G_NHWC = tf.transpose(self.G, [0, 2, 3, 1])
