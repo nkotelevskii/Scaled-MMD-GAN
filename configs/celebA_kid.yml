@@ -1,0 +1,32 @@
+model: mmd
+kernel: cubic
+
+architecture: dcgan5-pretrained
+df_dim: 64  # irrelevant
+dof_dim: 2048  # Inception code dimension
+z_dim: 128
+gf_dim: 64
+
+dataset: celebA
+output_size: 32
+c_dim: 3
+
+batch_norm: False
+with_sn: False
+with_learnable_sn_scale: False
+with_scaling: False
+gradient_penalty: 0
+L2_discriminator_penalty: 0
+
+learning_rate: !!float 1e-3
+gsteps: 1
+dsteps: 0
+start_dsteps: 0
+
+max_iteration: 150000
+beta1: 0.5
+beta2: 0.9
+decay_rate: .8
+clip_grad: True
+
+batch_size: 64

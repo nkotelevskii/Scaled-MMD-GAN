@@ -448,6 +448,29 @@ class SNResNetDiscriminator(Discriminator):
         return {'h0': h0, 'h1': h1, 'h2': h2, 'h3': h3, 'h4': h4, 'hF': hF}
 
 
+class PretrainedInceptionDiscriminator(Discriminator):
+    def network(self, image, batch_size, update_collection):
+        from tensorflow.contrib.gan.python.eval.python \
+            import classifier_metrics_impl as tfgan
+
+        if self.format == 'NCHW':
+            image = tf.transpose(image, [0, 2, 3, 1])  # want NHWC
+        image = 2 * image - 1  # input is in [0, 1], wants [-1, 1]
+        image = tf.image.resize_bilinear(
+            image, [tfgan.INCEPTION_DEFAULT_IMAGE_SIZE] * 2)
+        codes = tfgan.run_inception(
+            image, output_tensor=tfgan.INCEPTION_FINAL_POOL)
+
+        assert codes.shape[1].value == self.o_dim
+        return {'hF': codes}
+
+        # hF = linear(codes, self.o_dim, self.prefix + 'hF_lin',
+        #             update_collection=update_collection, with_sn=self.with_sn,
+        #             with_learnable_sn_scale=self.with_learnable_sn_scale,
+        #             scale=self.scale)
+        # return {'hcodes': codes, 'hF': hF}
+
+
 def get_networks(architecture):
     print('architec', architecture)
     if architecture == 'dcgan':
@@ -468,4 +491,6 @@ def get_networks(architecture):
         return ResNetGenerator, ResNetDiscriminator
     elif architecture == 'd-fullconv5':
         return DCGAN5Generator, FullConvDiscriminator
+    elif architecture == 'dcgan5-pretrained':
+        return DCGAN5Generator, PretrainedInceptionDiscriminator
     raise ValueError('Wrong architecture: "%s"' % architecture)

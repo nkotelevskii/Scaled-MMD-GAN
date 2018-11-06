@@ -50,6 +50,17 @@ def _dot_kernel(X, Y, K_XY_only=False):
     return K_XX, K_XY, K_YY, False
 
 
+def _cubic_kernel(X, Y, K_XY_only=False):
+    d = tf.cast(X.shape[1], X.dtype)
+    K_XY = (tf.matmul(X, Y, transpose_b=True) / d + 1) ** 3
+    if K_XY_only:
+        return K_XY
+
+    K_XX = (tf.matmul(X, X, transpose_b=True) / d + 1) ** 3
+    K_YY = (tf.matmul(Y, Y, transpose_b=True) / d + 1) ** 3
+    return K_XX, K_XY, K_YY, False
+
+
 def _rbf_kernel(X, Y, sigma=1., wt=1., K_XY_only=False):
 
     XX = tf.matmul(X, X, transpose_b=True)
